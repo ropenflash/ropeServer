@@ -2,7 +2,7 @@ const dotenv = require('dotenv');
 
 dotenv.config({ path: './.env' });
 
-const logger = require('./logger')
+const logger = require('./logger');
 
 const server = require('./app');
 
