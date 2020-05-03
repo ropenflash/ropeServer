@@ -11,6 +11,11 @@
     "eslint:fix": "eslint --fix --ext .js ./",
     "prepush": "npm run eslint && npm test"
   },
+  "husky": {
+    "hooks": {
+      "pre-push": "npm run eslint && npm test"
+    }
+  },
   "jest": {
     "collectCoverageFrom": [
       "*.js"
