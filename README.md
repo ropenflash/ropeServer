@@ -8,11 +8,21 @@ React frontend + Spring Boot API + PostgreSQL (Supabase).
 - **Backend:** Spring Boot 3 + Spring Data JPA
 - **Database:** PostgreSQL on Supabase (`search_items` table)
 
-## Quick start
+## Deploy on Vercel
+
+The React app + a Vercel serverless `/api/search` function deploy from `frontend/`.
+(Spring Boot cannot run on Vercel; use it locally or self-host. Production search uses Supabase PostgREST.)
+
+Required env vars on the Vercel project:
+
+- `SUPABASE_URL` — e.g. `https://zgwtehnofcahlrzeselb.supabase.co`
+- `SUPABASE_ANON_KEY` — project anon / publishable key
+
+## Quick start (local)
 
 ### 1. Database
 
-Schema and seed data are already applied to the Supabase project. For local development without a remote password, a local Postgres database works the same way:
+Schema and seed data are already applied to the Supabase project. For local Spring Boot without a remote password, a local Postgres database works the same way:
 
 ```bash
 # local defaults used by application.yml
@@ -23,14 +33,11 @@ To point Spring Boot at Supabase, copy the **Session pooler JDBC** string from t
 
 ```bash
 export SUPABASE_DB_URL='jdbc:postgresql://aws-0-ap-southeast-2.pooler.supabase.com:5432/postgres?user=postgres.zgwtehnofcahlrzeselb&password=YOUR_PASSWORD&sslmode=require'
-# When using the full JDBC URL above, username/password in the URL take precedence.
-# Or set them separately:
 export SUPABASE_DB_USER='postgres.zgwtehnofcahlrzeselb'
 export SUPABASE_DB_PASSWORD='YOUR_PASSWORD'
-export SUPABASE_DB_URL='jdbc:postgresql://aws-0-ap-southeast-2.pooler.supabase.com:5432/postgres?sslmode=require'
 ```
 
-### 2. Backend
+### 2. Backend (Spring Boot, optional locally)
 
 ```bash
 cd backend
@@ -47,7 +54,7 @@ npm install
 npm run dev
 ```
 
-Open http://localhost:5173 and start typing.
+Open http://localhost:5173 and start typing. Vite proxies `/api` to Spring Boot on `:8080`.
 
 ## API
 
