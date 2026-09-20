@@ -1,8 +1,15 @@
 /**
  * Vercel Serverless Function — typeahead search against Supabase Postgres (PostgREST).
  * Spring Boot remains available for local/self-hosted use; Vercel cannot run Spring Boot.
+ *
+ * Defaults use the public Supabase URL + anon key (safe with RLS read policy).
+ * Override with SUPABASE_URL / SUPABASE_ANON_KEY when needed.
  */
-module.exports = async function handler(req, res) {
+const DEFAULT_SUPABASE_URL = 'https://zgwtehnofcahlrzeselb.supabase.co';
+const DEFAULT_SUPABASE_ANON_KEY =
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inpnd3RlaG5vZmNhaGxyemVzZWxiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ0NDUyMjAsImV4cCI6MjEwMDAyMTIyMH0.PI8uXmm11dqaN1KXPm6I_FfUrBvLpVjyX33EuFQ-5Is';
+
+export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
@@ -15,12 +22,8 @@ module.exports = async function handler(req, res) {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  const supabaseUrl = process.env.SUPABASE_URL;
-  const supabaseKey = process.env.SUPABASE_ANON_KEY;
-
-  if (!supabaseUrl || !supabaseKey) {
-    return res.status(500).json({ error: 'Missing SUPABASE_URL or SUPABASE_ANON_KEY' });
-  }
+  const supabaseUrl = process.env.SUPABASE_URL || DEFAULT_SUPABASE_URL;
+  const supabaseKey = process.env.SUPABASE_ANON_KEY || DEFAULT_SUPABASE_ANON_KEY;
 
   const query = String(req.query.q || '').trim();
   if (!query) {
@@ -28,7 +31,7 @@ module.exports = async function handler(req, res) {
   }
 
   // Strip PostgREST filter metacharacters from user input
-  const safe = query.replace(/[,.()]/]/.g, ' ').replace(/\s+/g, ' ').trim();
+  const safe = query.replace(/[,.()\*]/g, ' ').replace(/\s+/g, ' ').trim();
   if (!safe) {
     return res.status(200).json([]);
   }
@@ -69,4 +72,4 @@ module.exports = async function handler(req, res) {
       detail: error instanceof Error ? error.message : 'Unknown error',
     });
   }
-};
+}
