@@ -10,13 +10,28 @@ React frontend + Spring Boot API + PostgreSQL (Supabase).
 
 ## Deploy on Vercel
 
-The React app + a Vercel serverless `/api/search` function deploy from `frontend/`.
-(Spring Boot cannot run on Vercel; use it locally or self-host. Production search uses Supabase PostgREST.)
+Spring Boot cannot run on Vercel. Production uses the React app in `frontend/` plus a Node serverless function at `frontend/api/search.js` that queries the same Supabase `search_items` table via PostgREST.
 
-Required env vars on the Vercel project:
+### Option A — Vercel Dashboard (recommended)
 
-- `SUPABASE_URL` — e.g. `https://zgwtehnofcahlrzeselb.supabase.co`
-- `SUPABASE_ANON_KEY` — project anon / publishable key
+1. Open [vercel.com/new](https://vercel.com/new) and import `ropenflash/ropeServer`
+2. Set **Root Directory** to `frontend`
+3. Framework preset: **Vite** (auto-detected)
+4. Add environment variables:
+   - `SUPABASE_URL` = `https://zgwtehnofcahlrzeselb.supabase.co`
+   - `SUPABASE_ANON_KEY` = your project anon key (Supabase → Project Settings → API)
+5. Deploy
+
+### Option B — CLI
+
+```bash
+cd frontend
+npx vercel login
+npx vercel link   # root directory: frontend
+npx vercel env add SUPABASE_URL
+npx vercel env add SUPABASE_ANON_KEY
+npx vercel --prod
+```
 
 ## Quick start (local)
 
