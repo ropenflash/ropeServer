@@ -14,6 +14,7 @@ async function fetchSuggestions(query, signal) {
 export default function TypeaheadSearch({ onSelect }) {
   const listboxId = useId();
   const inputRef = useRef(null);
+  const skipSearchRef = useRef(false);
   const [query, setQuery] = useState('');
   const [suggestions, setSuggestions] = useState([]);
   const [open, setOpen] = useState(false);
@@ -22,6 +23,11 @@ export default function TypeaheadSearch({ onSelect }) {
   const [activeIndex, setActiveIndex] = useState(-1);
 
   useEffect(() => {
+    if (skipSearchRef.current) {
+      skipSearchRef.current = false;
+      return undefined;
+    }
+
     const trimmed = query.trim();
     if (trimmed.length < 1) {
       setSuggestions([]);
@@ -58,9 +64,11 @@ export default function TypeaheadSearch({ onSelect }) {
   }, [query]);
 
   function choose(item) {
+    skipSearchRef.current = true;
     setQuery(item.name);
     setOpen(false);
     setSuggestions([]);
+    setActiveIndex(-1);
     onSelect?.(item);
   }
 
